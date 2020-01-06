@@ -235,7 +235,7 @@ def check(email, hibp_key):
             print('{0}╚══[✔︎]{2} Congrats! According to {1}avast-hackcheck{2} {0}{3}{2} hasn\'t appeared in any breach!'.format(G, IT, RA, email))
             results['hackcheck'] = "safe"
 
-        print('{0}╚══[*]{1} Check {2} using {0}dehashed.com{1} online service'.format(C, RA, email))
+        """print('{0}╚══[*]{1} Check {2} using {0}dehashed.com{1} online service'.format(C, RA, email))
         pwned = dehashed(email)
         ret(.1)
         if pwned:
@@ -243,7 +243,7 @@ def check(email, hibp_key):
             results['dehashed'] = "leaked"
         else:
             print('{0}╚══[✔︎]{2} Congrats! According to {1}dehashed.com{2} {0}{3}{2} hasn\'t appeared in any breach!'.format(G, IT, RA, email))
-            results['dehashed'] = "safe"
+            results['dehashed'] = "safe" """
 
         print('{0}╚══[*]{1} Check {2} using {0}haveibeensold.app{1} online service'.format(C, RA, email))
         pwned = HIBS(email)
