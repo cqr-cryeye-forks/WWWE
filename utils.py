@@ -21,7 +21,7 @@ default_headers = {
 @contextmanager
 def driver():
     options = Options()
-    options.headless = False
+    options.headless = True
     log_path = Path('logs').joinpath('geckodriver.log')
     with webdriver.Firefox(options=options, log_path=log_path) as d:
         yield d
