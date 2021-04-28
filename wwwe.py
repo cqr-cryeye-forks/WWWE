@@ -2,10 +2,10 @@ import asyncio
 import json
 from inspect import isfunction, getmembers
 
-import sites
-from sites.firefox import firefox
-from sites.inoitsu import inoitsu
-from sites.leakedsource import leakedsource
+import services
+from services.firefox import firefox
+from services.inoitsu import inoitsu
+from services.leakedsource import leakedsource
 from utils import parse_args, driver
 
 
@@ -19,7 +19,7 @@ async def main():
             inoitsu(d=d, email=args.email)
         ]
 
-    tasks = [asyncio.ensure_future(func(args.email)) for _, func in getmembers(sites, isfunction)]
+    tasks = [asyncio.ensure_future(func(args.email)) for _, func in getmembers(services, isfunction)]
     results.extend(filter(None, await asyncio.gather(*tasks)))
 
     with open('output.json', 'w') as f:
