@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import NoReturn
 
-from aiohttp import ClientSession
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
@@ -38,10 +37,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def set_headers(s: ClientSession, headers: dict = None) -> NoReturn:
+def get_headers(headers: dict = None) -> dict:
     if headers:
         default_headers.update(headers)
-    s.headers.update(default_headers)
+    return default_headers
 
 
 def clear_service_name(string: str) -> str:

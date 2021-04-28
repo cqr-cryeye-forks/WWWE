@@ -1,28 +1,29 @@
-from aiohttp import ClientSession
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
 
-from utils import print_error, unexpected_status, set_headers
+from utils import print_error
 
 inoitsu_url = 'https://www.hotsheet.com/inoitsu/'
 
 
-def parse_resp(content: str, email: str) -> dict:
-    if not ('no breaches found' in content.lower()):
-        return {'result': f'The mailing address: {email} was found in a Inoitsu service.'}
-    return {'result': f'The mailing address: {email} was not found in a Inoitsu search service.'}
+def process_search(d: WebDriver, email: str) -> int:
+    d.get(url=inoitsu_url)
+    submit = d.find_element_by_xpath('/html/body/center/div[2]/center/div/blockquote/form/input[3]')
+    email_field = d.find_element_by_xpath('//*[@id="act"]')
+    email_field.send_keys(email)
+    submit.click()
+    WebDriverWait(d, 10).until(
+        ec.presence_of_element_located((By.XPATH, '/html/body/center/div[2]/center/div/blockquote/h3'))
+    )
+    return 'no breaches found!' not in d.page_source.lower()
 
 
-async def inoitsu(email: str, session: ClientSession) -> dict:
-    data = {
-        'act': email,
-        'accounthide': 'test',
-        'submit': 'Submit'
-    }
+def inoitsu(d: WebDriver, email: str) -> dict:
     try:
-        set_headers(s=session)
-        async with session.post(inoitsu_url, data=data, verify_ssl=False) as resp:
-            if resp.status == 200:
-                return parse_resp(content=await resp.text(), email=email)
-            else:
-                await unexpected_status(resp=resp, service=__name__)
+        if process_search(d=d, email=email):
+            return {'result': f'The mailing address: {email} was found in a Inoitsu service.'}
+        return {'result': f'The mailing address: {email} was not found in a Inoitsu service.'}
     except Exception as e:
         print_error(e, service=__name__)

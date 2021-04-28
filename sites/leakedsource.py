@@ -17,7 +17,7 @@ def process_search(d: WebDriver, email: str) -> int:
     result = WebDriverWait(d, 10).until(
         ec.presence_of_element_located((By.XPATH, '/html/body/center[2]/div[2]'))
     )
-    return 'no results found.' in result.text.lower()
+    return 'no results found.' not in result.text.lower()
 
 
 def leakedsource(d: WebDriver, email: str) -> dict:

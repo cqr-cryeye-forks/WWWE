@@ -1,6 +1,7 @@
+import aiohttp
 from aiohttp import ClientSession
 
-from utils import print_error, unexpected_status, set_headers
+from utils import print_error, unexpected_status, get_headers
 
 cybernews_url = 'https://check.cybernews.com/chk/'
 
@@ -11,14 +12,13 @@ def parse_resp(content: dict, email: str) -> dict:
     return {'result': f'The mailing address: {email} was not found in a Cybernews Leak Check service.'}
 
 
-async def cybernews(email: str, session: ClientSession) -> dict:
+async def cybernews(email: str) -> dict:
     data = {
         'lang': 'en_US',
         'e': email
     }
     try:
-        set_headers(s=session)
-        async with session.post(cybernews_url, data=data, verify_ssl=False) as resp:
+        async with aiohttp.request(method='POST', url=cybernews_url, data=data, headers=get_headers()) as resp:
             if resp.status == 200:
                 return parse_resp(content=await resp.json(), email=email)
             else:

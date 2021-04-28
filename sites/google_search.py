@@ -1,23 +1,19 @@
-from aiohttp import ClientSession
-from bs4 import BeautifulSoup
+import aiohttp
 
-from utils import print_error, unexpected_status, set_headers
+from utils import print_error, unexpected_status, get_headers
 
 google_url = 'https://google.com/search?q='
 
 
 def parse_resp(content: str, email: str) -> dict:
-    soup = BeautifulSoup(content, 'lxml')
-    results = soup.find('div', {'id': 'search'}).find_all('div', class_='g')
-    if results:
+    if '<div class="g">' in content:
         return {'result': f'The mailing address: {email} was found in a Google search service.'}
     return {'result': f'The mailing address: {email} was not found in a Google search service.'}
 
 
-async def google_search(email: str, session: ClientSession) -> dict:
+async def google_search(email: str) -> dict:
     try:
-        set_headers(s=session)
-        async with session.get(f'{google_url}{email}', verify_ssl=False) as resp:
+        async with aiohttp.request(method='GET', url=f'{google_url}{email}', headers=get_headers()) as resp:
             if resp.status == 200:
                 return parse_resp(content=await resp.text(), email=email)
             else:

@@ -1,14 +1,13 @@
-from aiohttp import ClientSession
+import aiohttp
 
-from utils import print_error, set_headers, unexpected_status
+from utils import print_error, unexpected_status, get_headers
 
 haveibeenpwned_url = 'https://haveibeenpwned.com/unifiedsearch/'
 
 
-async def haveibeenpwned(email: str, session: ClientSession) -> dict:
+async def haveibeenpwned(email: str) -> dict:
     try:
-        set_headers(s=session)
-        async with session.get(f'{haveibeenpwned_url}{email}', verify_ssl=False) as resp:
+        async with aiohttp.request(method='GET', url=f'{haveibeenpwned_url}{email}', headers=get_headers()) as resp:
             if resp.status == 200:
                 return {'result': f'The mailing address: {email} was found in a Haveibeenpwned service.'}
             elif resp.status == 404:

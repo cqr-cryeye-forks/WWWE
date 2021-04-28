@@ -1,24 +1,23 @@
-from aiohttp import ClientSession
+import aiohttp
 
-from utils import print_error, unexpected_status, set_headers
+from utils import print_error, unexpected_status, get_headers
 
 haveibeensold_url = 'https://haveibeensold.app/api/api.php'
 
 
 def parse_resp(content: dict, email: str) -> dict:
-    if content['data']:
+    if content['data'] and content['data'] != 'E_NOT_VALID':
         return {'result': f'The mailing address: {email} was found in a Haveibeensold service.'}
     return {'result': f'The mailing address: {email} was not found in a Haveibeensold service.'}
 
 
-async def haveibeensold(email: str, session: ClientSession) -> dict:
+async def haveibeensold(email: str) -> dict:
     data = {
         'email': email,
         'action': 'check'
     }
     try:
-        set_headers(s=session)
-        async with session.post(haveibeensold_url, data=data, verify_ssl=False) as resp:
+        async with aiohttp.request(method='POST', url=haveibeensold_url, data=data, headers=get_headers()) as resp:
             if resp.status == 200:
                 return parse_resp(content=await resp.json(), email=email)
             else:

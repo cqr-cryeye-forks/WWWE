@@ -1,8 +1,8 @@
 import base64
 
-from aiohttp import ClientSession
+import aiohttp
 
-from utils import print_error, set_headers, unexpected_status
+from utils import print_error, unexpected_status, get_headers
 
 lifelock_url = 'https://www.lifelock.com/bin/norton/lifelock/detectbreach'
 
@@ -22,7 +22,7 @@ def parse_resp(content: dict, email: str) -> dict:
     return {'result': f'The mailing address: {email} was not found in a Lifelock search service.'}
 
 
-async def lifelock(email: str, session: ClientSession) -> dict:
+async def lifelock(email: str) -> dict:
     bemail = base64.b64encode(email.encode('UTF-8'))
     data = {
         'email': bemail.decode('UTF-8'),
@@ -30,8 +30,7 @@ async def lifelock(email: str, session: ClientSession) -> dict:
         'country': 'us'
     }
     try:
-        set_headers(s=session, headers=headers)
-        async with session.post(lifelock_url, data=data, verify_ssl=False) as resp:
+        async with aiohttp.request(method='POST', url=lifelock_url, data=data, headers=get_headers(headers)) as resp:
             if resp.status == 200:
                 return parse_resp(content=await resp.json(), email=email)
             else:
