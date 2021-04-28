@@ -18,7 +18,7 @@ default_headers = {
 
 
 def clear_service_name(string: str) -> str:
-    return string.replace('_', '').split('.')[-1].title()
+    return string.replace('_', ' ').split('.')[-1].title()
 
 
 @contextmanager

@@ -3,7 +3,7 @@ import json
 from inspect import isfunction, getmembers
 
 import services
-from services.firefox import firefox
+from services.firefox_monitor import firefox
 from services.inoitsu import inoitsu
 from services.leakedsource import leakedsource
 from utils import parse_args, driver
