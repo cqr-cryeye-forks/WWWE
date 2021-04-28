@@ -1,14 +1,14 @@
 import aiohttp
 
-from utils import print_error, unexpected_status, get_headers
+from utils import print_error, unexpected_status, get_headers, result
 
 haveibeensold_url = 'https://haveibeensold.app/api/api.php'
 
 
 def parse_resp(content: dict, email: str) -> dict:
     if content['data'] and content['data'] != 'E_NOT_VALID':
-        return {'result': f'The mailing address: {email} was found in a Haveibeensold service.'}
-    return {'result': f'The mailing address: {email} was not found in a Haveibeensold service.'}
+        return result(email=email, service=__name__, is_leak=True)
+    return result(email=email, service=__name__, is_leak=False)
 
 
 async def haveibeensold(email: str) -> dict:

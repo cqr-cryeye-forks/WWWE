@@ -3,7 +3,7 @@ from typing import Union
 
 import aiohttp
 
-from utils import print_error, unexpected_status, get_headers
+from utils import print_error, unexpected_status, get_headers, result
 
 avast_url = 'https://identityprotection.avast.com/v1/web/query/site-breaches/unauthorized-data'
 
@@ -22,8 +22,8 @@ headers = {
 def parse_resp(content: dict, email: str) -> Union[dict, None]:
     try:
         if content['breaches']:
-            return {'result': f'The mailing address: {email} was found in a Avast Hackcheck service.'}
-        return {'result': f'The mailing address: {email} was not found in a Avast Hackcheck search service.'}
+            return result(email=email, service=__name__, is_leak=True)
+        return result(email=email, service=__name__, is_leak=False)
     except TypeError:
         return None
 

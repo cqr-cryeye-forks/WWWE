@@ -2,7 +2,7 @@ import base64
 
 import aiohttp
 
-from utils import print_error, unexpected_status, get_headers
+from utils import print_error, unexpected_status, get_headers, result
 
 lifelock_url = 'https://www.lifelock.com/bin/norton/lifelock/detectbreach'
 
@@ -18,8 +18,8 @@ headers = {
 
 def parse_resp(content: dict, email: str) -> dict:
     if content['data']['results']:
-        return {'result': f'The mailing address: {email} was found in a Lifelock search service.'}
-    return {'result': f'The mailing address: {email} was not found in a Lifelock search service.'}
+        return result(email=email, service=__name__, is_leak=True)
+    return result(email=email, service=__name__, is_leak=False)
 
 
 async def lifelock(email: str) -> dict:

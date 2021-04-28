@@ -3,7 +3,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from utils import print_error
+from utils import print_error, result
 
 firefox_url = 'https://monitor.firefox.com/'
 
@@ -23,7 +23,7 @@ def process_search(d: WebDriver, email: str) -> int:
 def firefox(d: WebDriver, email: str) -> dict:
     try:
         if process_search(d=d, email=email):
-            return {'result': f'The mailing address: {email} was found in a Firefox Monitor service.'}
-        return {'result': f'The mailing address: {email} was not found in a Firefox Monitor service.'}
+            return result(email=email, service=__name__, is_leak=True)
+        return result(email=email, service=__name__, is_leak=False)
     except Exception as e:
         print_error(e, service=__name__)

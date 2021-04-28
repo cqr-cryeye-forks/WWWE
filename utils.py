@@ -17,6 +17,10 @@ default_headers = {
 }
 
 
+def clear_service_name(string: str) -> str:
+    return string.replace('_', '').split('.')[-1].title()
+
+
 @contextmanager
 def driver():
     options = Options()
@@ -26,9 +30,10 @@ def driver():
         yield d
 
 
-def print_error(e: Exception, service: str):
-    name = clear_service_name(string=service)
-    print(f'{name}. An error occurred!\nError: {e}\n')
+def get_headers(headers: dict = None) -> dict:
+    if headers:
+        default_headers.update(headers)
+    return default_headers
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,14 +42,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def get_headers(headers: dict = None) -> dict:
-    if headers:
-        default_headers.update(headers)
-    return default_headers
+def print_error(e: Exception, service: str):
+    name = clear_service_name(string=service)
+    print(f'{name}. An error occurred!\nError: {e}\n')
 
 
-def clear_service_name(string: str) -> str:
-    return string.replace('_', '').split('.')[-1]
+def result(email: str, service: str, is_leak: bool) -> dict:
+    name = clear_service_name(string=service)
+    status = 'found' if is_leak else 'not found'
+    return {
+        'service': name,
+        'is_leak': is_leak,
+        'message': f'The mailing address: {email} was {status} in a {name} service.',
+    }
 
 
 async def unexpected_status(resp, service: str) -> NoReturn:

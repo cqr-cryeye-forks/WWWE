@@ -1,5 +1,4 @@
 import aiohttp
-from aiohttp import ClientSession
 
 from utils import print_error, unexpected_status, get_headers
 

@@ -1,14 +1,14 @@
 import aiohttp
 
-from utils import print_error, unexpected_status, get_headers
+from utils import print_error, unexpected_status, get_headers, result
 
 google_url = 'https://google.com/search?q='
 
 
 def parse_resp(content: str, email: str) -> dict:
     if '<div class="g">' in content:
-        return {'result': f'The mailing address: {email} was found in a Google search service.'}
-    return {'result': f'The mailing address: {email} was not found in a Google search service.'}
+        return result(email=email, service=__name__, is_leak=True)
+    return result(email=email, service=__name__, is_leak=False)
 
 
 async def google_search(email: str) -> dict:
